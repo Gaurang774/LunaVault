@@ -1,3 +1,8 @@
+# Ice detection on the synthetic test data. Loads the four Stokes rasters
+# (S1-S4), works out CPR and DOP from them, and flags pixels that look like
+# ice (high CPR, low DOP). The raw mask is cleaned up by dropping tiny specks
+# and closing small gaps, then the CPR, DOP and mask are saved and a figure is
+# drawn for a quick look.
 import os
 import numpy as np
 import rasterio

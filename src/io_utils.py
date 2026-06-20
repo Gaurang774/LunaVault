@@ -1,3 +1,6 @@
+# Small set of shared helpers for reading and writing rasters. There is one
+# function to load a single band as float, one to load all four Stokes bands at
+# once, and one to save an array back out as a GeoTIFF.
 import rasterio
 import numpy as np
 

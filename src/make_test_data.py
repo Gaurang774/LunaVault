@@ -1,3 +1,7 @@
+# Builds fake test data so the detection code can be run without the real
+# satellite files. It makes up a 400x400 scene with mostly background, then
+# plants one patch that looks like ice and one rough patch, turns those into
+# the four Stokes bands, and saves them as test_S1..S4 GeoTIFFs.
 import numpy as np
 import rasterio
 from rasterio.transform import from_origin

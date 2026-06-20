@@ -1,3 +1,8 @@
+# Real-data ice detection using three radar products together: CPR, SRD and
+# TRT. A pixel is called ice only when all three agree (high CPR, low SRD,
+# high TRT). The real rasters are huge, so they are read a few thousand rows
+# at a time to keep memory in check, counts are tallied as it goes, and the
+# final mask is written out along with a small downsampled preview image.
 import os, glob, numpy as np, rasterio, matplotlib.pyplot as plt
 
 BASE = "/home/gaurang/Downloads/ch2_sar_ndxl_20250630mpcpspeast_d_fp_xxx/data/derived/20250630"
