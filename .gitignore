@@ -17,3 +17,9 @@ __pycache__/
 
 venv/
 venv/
+# Generated outputs
+data/processed/*.tif
+data/processed/*.png
+data/processed/*.jpg
+data/processed/*.tif
+*.tif
