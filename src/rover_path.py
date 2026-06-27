@@ -27,7 +27,7 @@ TARGET_DIST_KM = 5.0      # desired landing distance from ice cluster
 # ============================================================
 # 1. Load ice grid (downsampled)
 # ============================================================
-with rasterio.open("data/processed/ice_in_psr.tif") as src:
+with rasterio.open("data/processed/ice_cpr_psr.tif") as src:
     H0, W0 = src.height, src.width
     H, W = H0 // DOWNSAMPLE, W0 // DOWNSAMPLE
     ice = src.read(1, out_shape=(H, W), resampling=RS.nearest)
@@ -171,6 +171,16 @@ else:
     print(f"Detour factor: {path_km/straight:.2f}x")
     print(f"Max slope on path: {np.nanmax(ps):.1f} deg")
     print(f"Mean slope on path: {np.nanmean(ps):.1f} deg")
+
+    # --- Push results to the dashboard ---
+    import dash_io
+    dash_io.update("rover", {
+        "path_km": round(float(path_km), 2),
+        "straight_km": round(float(straight), 2),
+        "detour": round(float(path_km / straight), 2),
+        "max_slope_deg": round(float(np.nanmax(ps)), 1),
+        "limit_slope_deg": MAX_SLOPE_DEG,
+    })
 
 # ============================================================
 # 7. Figure
