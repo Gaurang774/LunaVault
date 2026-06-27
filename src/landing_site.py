@@ -1,16 +1,7 @@
 # ============================================================
-# LunaVault — Landing Site Selection (Official Step 4)
-# MEMORY-SAFE version: works on a downsampled grid to avoid crashes.
-# ============================================================
-# Finds safe, flat terrain near PSR-restricted ice deposits.
-# All inputs reprojected onto the (downsampled) ice grid so they align.
-# Inputs:
-#   data/processed/ice_in_psr.tif        (cold-trap ice pixels)
-#   data/raw/dtm/LDEM_80S_80MPP_ADJ.TIF  (elevation, Moon-2015)
-#   data/raw/dtm/LDSM_80S_80MPP_ADJ.TIF  (slope deg, Moon-2015)
-# Outputs:
-#   outputs/figures/06_landing_sites.png
-#   prints top 5 candidate landing sites
+# LunaVault — Landing Site Selection (Official Step 4) v2
+# Uses corrected CPR-in-PSR ice mask (validated vs paper craters).
+# MEMORY-SAFE: works on a downsampled grid to avoid crashes.
 # ============================================================
 import os
 import numpy as np
@@ -29,15 +20,15 @@ MAX_SLOPE_DEG   = 15.0    # lander tip-over limit
 MAX_ICE_DIST_KM = 10.0    # rover lands within 10 km of ice
 DOWNSAMPLE      = 4       # process at 4x coarser res to save memory
 
+ICE_MASK = "data/processed/ice_cpr_psr.tif"   # corrected detection
+
 # ============================================================
 # 1. Load ice mask DOWNSAMPLED (defines target grid)
 # ============================================================
-with rasterio.open("data/processed/ice_in_psr.tif") as src:
+with rasterio.open(ICE_MASK) as src:
     H0, W0 = src.height, src.width
     H, W = H0 // DOWNSAMPLE, W0 // DOWNSAMPLE
-    # read at reduced resolution
-    # build the downsampled transform
-    ice = src.read(1, out_shape=(H, W), resampling=RS.nearest)  # keep ice presence
+    ice = src.read(1, out_shape=(H, W), resampling=RS.nearest)
     ice_transform = src.transform * src.transform.scale(W0 / W, H0 / H)
     ice_crs = src.crs
     px_m = abs(ice_transform.a)
@@ -50,8 +41,9 @@ print(f"Ice pixels (downsampled): {int(ice_present.sum())}")
 # 2. Reproject DEM + slope onto the downsampled ice grid
 # ============================================================
 def reproject_to_grid(path):
+    """Reproject the raster at `path` onto the downsampled ice grid."""
     out = np.full((H, W), np.nan, dtype=np.float32)
-    with rasterio.open(path) as src:
+    with rasterio.open(path) as src:          # FIXED: opens the given path
         reproject(
             source=rasterio.band(src, 1),
             destination=out,
@@ -118,13 +110,13 @@ for i in range(5):
     if work[r, c] <= 0:
         break
     lat, lon = pixel_to_latlon(r, c)
-    sites.append((i+1, r, c, lat, lon, float(score[r,c]),
-                  float(slope[r,c]), float(dist_km[r,c])))
+    sites.append((i+1, r, c, lat, lon, float(score[r, c]),
+                  float(slope[r, c]), float(dist_km[r, c])))
     print(f"  Site {i+1}: lat {lat:.2f}, lon {lon:.2f} | "
           f"score {score[r,c]:.3f} | slope {slope[r,c]:.1f} deg | "
           f"{dist_km[r,c]:.1f} km to ice")
     rad = 15
-    work[max(0,r-rad):r+rad, max(0,c-rad):c+rad] = 0
+    work[max(0, r-rad):r+rad, max(0, c-rad):c+rad] = 0
 
 if not sites:
     print("  No valid sites found (try relaxing thresholds).")
@@ -140,7 +132,7 @@ for site in sites:
     _, r, c, lat, lon, sc, sl, di = site
     plt.scatter(c, r, c="red", s=150, marker="*", edgecolors="white", zorder=5)
     plt.annotate(f"#{site[0]}", (c, r), color="white", fontsize=12, weight="bold")
-plt.title(f"Landing sites (stars) near PSR ice (cyan)\n"
+plt.title(f"Landing sites (stars) near cold-trap ice (cyan)\n"
           f"slope < {MAX_SLOPE_DEG} deg, within {MAX_ICE_DIST_KM} km of ice")
 plt.savefig("outputs/figures/06_landing_sites.png", dpi=130, bbox_inches="tight")
 print("\nSaved: outputs/figures/06_landing_sites.png")
