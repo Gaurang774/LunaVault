@@ -1,21 +1,15 @@
-LunaVault - Ice Volume Estimate (Official Step 6)
-=======================================================
+LunaVault - Ice Volume Estimate v2 (corrected CPR-in-PSR)
+==========================================================
 
-Detected ice pixels (PSR-restricted): 2275
-  candidate: 2274, high-confidence: 1
+Detection: CPR>1 inside PSRs, validated vs Sinha 2026 craters
+Detected ice pixels: 41,422
 Pixel size: 25.0 m  (area 625 m^2)
-Ice surface area: 1.42 km^2
+Ice surface area: 25.89 km^2
 Assumed depth: top 5 m
-Bulk near-surface volume: 0.0071 km^3
+Bulk volume: 0.1294 km^3
 Ice density: 920 kg/m^3
 
 Scenario                           Ice vol (m^3)    Ice mass (t)
-P10 (conservative, 2% ice)               142,188         130,812
-P50 (nominal, 10% ice)                   710,938         654,062
-P90 (optimistic, 30% ice)              2,132,812       1,962,188
-
-Assumptions:
-- Ice concentration (2/10/30%) spans literature range for
-  regolith-mixed polar ice; not pure ice slabs.
-- Depth of 5 m per problem statement; radar senses near-surface.
-- Detected area is PSR-restricted (physically valid cold traps).
+P10 (conservative, 2% ice)             2,588,875       2,381,765
+P50 (nominal, 10% ice)                12,944,375      11,908,825
+P90 (optimistic, 30% ice)             38,833,125      35,726,475
